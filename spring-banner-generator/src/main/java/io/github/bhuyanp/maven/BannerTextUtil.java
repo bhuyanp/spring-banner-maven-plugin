@@ -6,6 +6,7 @@ import io.github.bhuyanp.maven.theme.TextPadding;
 import io.github.bhuyanp.maven.theme.Theme;
 import io.github.bhuyanp.maven.theme.ThemeConfig;
 import io.github.bhuyanp.maven.theme.ThemePreset;
+import org.apache.maven.project.MavenProject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,28 +24,33 @@ public interface BannerTextUtil {
                 """;
 
 
-    default String getBannerWCaption(String bannerText, List<String> bannerFonts, String captionText, ThemePreset themePreset) {
-        String bannerFont = "usaflag";
+    default String getBannerWCaption(MavenProject project, String bannerText, List<String> bannerFonts, String captionText, String themePreset) {
+
+        String bannerFont;
         if (bannerFonts.size() > 1) {
             bannerFont = bannerFonts.get(new Random().nextInt(bannerFonts.size()));
         } else if (bannerFonts.size() == 1) {
             bannerFont = bannerFonts.get(0);
+        } else {
+            bannerFont = DEFAULT_FONTS[new Random().nextInt(DEFAULT_FONTS.length)];
         }
-        return getBannerWCaption(bannerText, bannerFont, captionText, themePreset);
+        return getBannerWCaption(project, bannerText, bannerFont, captionText, themePreset);
     }
 
-    default String getBannerWCaption(String bannerText, String bannerFont, String captionText, ThemePreset themePreset) {
 
-        return getBannerWCaption(bannerFont, bannerText, themePreset.getTheme().getBannerTheme(), captionText,  themePreset.getTheme().getCaptionTheme(), themePreset == ThemePreset.SURPRISE_ME);
-    }
+    default String getBannerWCaption(MavenProject project, String bannerText, String bannerFont, String captionText, String themePresetStr) {
+        bannerText = null==bannerText||bannerText.isBlank()?capitalizeProjectName(project.getName()): bannerText;
 
-    private String getBannerWCaption(String bannerFont, String bannerText, ThemeConfig bannerTheme, String captionText, ThemeConfig captionTheme, boolean printConfig) {
+        ThemePreset themePreset = ThemePreset.valueOf(themePresetStr);
+        ThemeConfig bannerTheme = themePreset.getTheme().getBannerTheme();
+        ThemeConfig captionTheme = themePreset.getTheme().getCaptionTheme();
+
         bannerText = getBanner(bannerFont, bannerText, bannerTheme);
         captionText = getCaption(captionText, captionTheme);
-        if (printConfig) {
-            System.out.println("  bannerTheme = " + bannerTheme);
+        if (themePreset==ThemePreset.SURPRISE_ME) {
+            System.out.println("bannerTheme = " + bannerTheme);
             if (!captionText.isBlank()) {
-                System.out.println("  captionTheme = " + captionTheme);
+                System.out.println("captionTheme = " + captionTheme);
             }
         }
         String result = captionText.isBlank()
@@ -58,50 +64,34 @@ public interface BannerTextUtil {
 
     private String getBanner(String font, String text, ThemeConfig bannerTheme) {
         if (text.isBlank()) return text;
-        System.out.println("  Banner Font: " + font);
+        System.out.println(System.lineSeparator()+"Banner Font: " + font);
         String banner = FigletBannerRenderer.SINGLETON.render(font, text);
 
-        TextPadding textPadding = Theme.getBannerPadding(font);
-
-        //For no background banners no left/right padding needed
-        if (!bannerTheme.hasBackColor()) {
-            textPadding = new TextPadding(textPadding.getTop(), 0, textPadding.getBottom(), 0);
+        //Apply padding only when back color is present
+        if (bannerTheme.hasBackColor()) {
+            TextPadding textPadding = Theme.getBannerPadding(font);
+            banner = textPadding.apply(banner);
+            System.out.println("Banner Paddings: " + textPadding);
         }
 
-        System.out.println("  Banner Paddings: " + textPadding);
-        banner = textPadding.apply(banner);
         banner = banner.lines()
                 .map(line -> colorize(line, bannerTheme))
                 .collect(Collectors.joining(System.lineSeparator()));
         return banner;
     }
 
-    String SPRING_BOOT_VERSION = "${spring-boot.version}";
-
-
     default String getCaption(String caption, ThemeConfig captionTheme) {
         if (caption.isBlank()) return caption;
         //For no background, padding not needed for captions
         boolean addPadding = captionTheme.hasBackColor();
-        int biggestLineLength = caption.lines().map(line -> {
-                    if (line.contains(SPRING_BOOT_VERSION)) {
-                        return line.length() - SPRING_BOOT_VERSION.length() + 5;
-                    } else {
-                        return line.length();
-                    }
-                })
-                .max(Integer::compareTo).get()+1;
+        int biggestCaptionLine = caption.lines().map(String::length)
+                .max(Integer::compareTo).get();
         caption = caption.lines()
-                .map(line -> {
-                    if (line.contains(SPRING_BOOT_VERSION)) {
-                        return line + DEFAULT_SPACING.repeat(biggestLineLength - (line.length() - SPRING_BOOT_VERSION.length() + 5));
-                    } else {
-                        return line + DEFAULT_SPACING.repeat(biggestLineLength - line.length());
-                    }
-                })
+                .map(String::trim)
+                .map(line -> line + DEFAULT_SPACING.repeat(biggestCaptionLine - line.length()))
                 .collect(Collectors.joining(System.lineSeparator()));
         if (addPadding) {
-            caption = new TextPadding(1, 2, 1, 3).apply(caption);
+            caption = new TextPadding(1, 2, 1, 2).apply(caption);
         } else {
             caption = caption.lines().map(line->"| "+line).collect(Collectors.joining(System.lineSeparator()));
         }
@@ -120,7 +110,8 @@ public interface BannerTextUtil {
                 .collect(Collectors.joining(" "));
     }
 
-    List<String> DEFAULT_FONTS = List.of(
+
+    String[] DEFAULT_FONTS = {
             "3d",
             "4max",
             "ansiregular",
@@ -147,6 +138,8 @@ public interface BannerTextUtil {
             "usaflag",
             "usaflag",
             "usaflag",
-            "whimsy");
+            "whimsy"};
+
+    String LINE_SEPARATOR = System.lineSeparator()+"-".repeat(30);
 
 }

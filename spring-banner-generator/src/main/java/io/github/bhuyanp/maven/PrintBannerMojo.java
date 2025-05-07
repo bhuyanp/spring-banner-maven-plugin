@@ -6,10 +6,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
-@Mojo(name = "printBanner", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
+import java.util.Arrays;
+
+@Mojo(name = "printBanner", threadSafe = true)
 public class PrintBannerMojo extends BannerMojoBase implements BannerTextUtil {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException{
-        System.out.println(getBannerWCaption(capitalizeProjectName(bannerText), DEFAULT_FONTS, captionText, ThemePreset.valueOf(themePreset)));
+        String bannerWCaption = getBannerWCaption(project, bannerText, Arrays.asList(bannerFonts), captionText, themePreset);
+        System.out.println(bannerWCaption);
     }
 }

@@ -6,43 +6,38 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 @Mojo(name = "generateBanner", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GenerateBannerMojo extends BannerMojoBase implements BannerTextUtil {
+    public static final String OUTPUT_DIRECTORY_DEFAULT_VALUE = "${project.build.outputDirectory}";
+    public static final String BANNER_FILE_NAME = "banner.txt";
 
-
-
-    public GenerateBannerMojo() {
-        // this constructor is used by maven to create the mojo
-    }
-
-    /**
-     * This constructor can be used to set all the parameters of the mojo.
-     */
-    @SuppressWarnings("java:S107")
-    public GenerateBannerMojo(final MavenProject project,
-                        final String bannerText,
-                        final String captionText,
-                        final String [] bannerFonts,
-                        final String themePreset,
-                        final String info,
-                        final String font,
-                        final String color,
-                        final boolean useNbsp) {
-        this.project = project;
-        this.bannerText = bannerText;
-        this.captionText = captionText;
-        this.bannerFonts = bannerFonts;
-        this.themePreset = themePreset;
-    }
-
+    @Parameter(defaultValue = OUTPUT_DIRECTORY_DEFAULT_VALUE)
+    private File outputDirectory;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException{
-        System.out.println(getBannerWCaption(capitalizeProjectName(bannerText), Arrays.asList(bannerFonts), captionText, ThemePreset.valueOf(themePreset)));
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        String bannerWCaption = getBannerWCaption(project, bannerText, Arrays.asList(bannerFonts), captionText, themePreset);
+        wtiteFile(bannerWCaption);
+    }
+
+    private void wtiteFile(String bannerWCaption) throws MojoExecutionException {
+        final Path bannerFile = outputDirectory.toPath().resolve(BANNER_FILE_NAME);
+        if (outputDirectory.exists() || outputDirectory.mkdirs()) {
+            try {
+                Files.writeString(bannerFile, bannerWCaption);
+
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to create banner file " + outputDirectory);
+            }
+        } else {
+            throw new MojoExecutionException("Failed to create output directory " + outputDirectory);
+        }
     }
 }

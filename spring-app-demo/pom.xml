@@ -79,20 +79,20 @@
 <!--            </plugin>-->
             <plugin>
                 <groupId>io.github.bhuyanp.maven</groupId>
-                <artifactId>spring-banner-generator</artifactId>
+                <artifactId>spring-banner-plugin</artifactId>
                 <version>1.0</version>
                 <configuration>
 <!--                    <bannerText>Funky Banner</bannerText>-->
-                    <bannerFonts>
-                        <option>lineblocks</option>
-                        <option>starwars</option>
-                    </bannerFonts>
+<!--                    <bannerFonts>-->
+<!--                        <option>lineblocks</option>-->
+<!--                        <option>starwars</option>-->
+<!--                    </bannerFonts>-->
 <!--                    <captionText>-->
-<!--Project Version         : ${version}-->
-<!--JDK Version             : ${java.version}-->
-<!--Spring Boot Version     : ${parent.version}-->
+<!--                            Project Version         : ${version}-->
+<!--                            JDK Version             : ${java.version}-->
+<!--                            Spring Boot Version     : ${parent.version}-->
 <!--                    </captionText>-->
-                    <themePreset>SURPRISE_ME</themePreset>
+<!--                    <themePreset>SURPRISE_ME</themePreset>-->
                 </configuration>
                 <executions>
                     <execution>

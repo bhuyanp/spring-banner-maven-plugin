@@ -3,7 +3,6 @@ package io.github.bhuyanp.maven.theme;
 
 import io.github.bhuyanp.maven.ansi.AnsiFormat;
 import io.github.bhuyanp.maven.ansi.Attribute;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
