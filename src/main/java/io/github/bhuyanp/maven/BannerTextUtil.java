@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 
 import static io.github.bhuyanp.maven.ansi.Ansi.colorize;
 
+/**
+ * Interface various utility function to generate banner and caption text
+ * with theme.
+ */
 public interface BannerTextUtil {
 
     String CAPTION_DEFAULT_VALUE =  """
@@ -25,7 +29,6 @@ public interface BannerTextUtil {
 
 
     default String getBannerWCaption(MavenProject project, String bannerText, List<String> bannerFonts, String captionText, String themePreset) {
-
         String bannerFont;
         if (bannerFonts.size() > 1) {
             bannerFont = bannerFonts.get(new Random().nextInt(bannerFonts.size()));

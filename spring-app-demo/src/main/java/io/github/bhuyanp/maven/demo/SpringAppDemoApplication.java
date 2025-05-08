@@ -12,5 +12,4 @@ public class SpringAppDemoApplication {
 		SpringApplication.run(SpringAppDemoApplication.class, args);
 	}
 
-
 }

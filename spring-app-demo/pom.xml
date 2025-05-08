@@ -11,7 +11,7 @@
     <groupId>io.github.bhuyanp.maven</groupId>
     <artifactId>spring-app-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-app-demo</name>
+    <name>Spring App Demo</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
@@ -54,34 +54,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>ch.acanda.maven</groupId>-->
-<!--                <artifactId>spring-banner-plugin</artifactId>-->
-<!--                <version>1.6.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>generate-spring-banner</id>-->
-<!--                        <phase>generate-resources</phase> &lt;!&ndash;(1)&ndash;&gt;-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration> &lt;!&ndash;(2)&ndash;&gt;-->
-<!--                    <text>${project.name}</text>-->
-<!--                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>-->
-<!--                    <filename>banner.txt</filename>-->
-<!--                    <includeInfo>true</includeInfo>-->
-<!--                    <info>Version: ${project.version}</info>-->
-<!--                    <font>standard</font>-->
-<!--                    <color>default</color>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
-                <groupId>io.github.bhuyanp.maven</groupId>
-                <artifactId>spring-banner-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>io.github.bhuyanp</groupId>
+                <artifactId>spring-banner-maven-plugin</artifactId>
+                <version>1.1</version>
                 <configuration>
+                    <outputDirectory>sdf</outputDirectory>
 <!--                    <bannerText>Funky Banner</bannerText>-->
 <!--                    <bannerFonts>-->
 <!--                        <option>lineblocks</option>-->
@@ -106,5 +84,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
